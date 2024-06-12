@@ -108,7 +108,7 @@ public class ConcreteIterator implements Iterator {
     BookShelf를 어떻게 변경하든 BookShelf가 iterator 메소드를 가지고 있고 올바른 Iterator<Book>을 반환하면 위의 while 루프는 변경하지 않아도 동작한다.
 
 
-# Apapter
+# Adapter
 기존 코드를 클라이언트에서 요구하는 용도로 사용할 수 있도록 다른 인터페이스로 변환해주는 패턴
 * 클래스에 의한 Adapter 패턴(상속)
 * 인스턴스에 의한 Adapter 패턴(위임)
