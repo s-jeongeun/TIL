@@ -194,15 +194,49 @@ public class Adapter extends Target {
 
 
 # Template Method
+상위 클래스에서 공통적으로 사용할 메소드를 정의하고, 하위 클래스에서 구체적인 처리 방식을 구현하는 패턴
 
 ## 요소
+* AbstractClass (추상 클래스)
+    * 템플릿 메소드 구현, 템플릿 메소드에서 사용할 추상 메소드 선언
+* ConcreteClass (구현 클래스)
+    * AbstractClass에서 정의된 추상 메소드를 구체적으로 구현
 
 ## 예제
 ```java
+public class AbstractClass {
+    public final void templateMethod() {
+        abstractMethod1();
+        abstractMethod2();
+    }
 
+    public abstract void abstractMethod1();
+    public abstract void abstractMethod2();
+}
+
+public class ConcreteClass extends AbstractClass {
+    @Override
+    public void abstractMethod1() {
+        System.out.println("abstractMethod1")
+    }
+
+    @Override
+    public void abstractMethod2() {
+        System.out.println("abstractMethod2")
+    }
+}
+
+public class Main {
+   public static void main(String[] args) {
+       AbstractClass template = new ConcreteClass();
+       template.templateMethod();
+   }
+}
 ```
 
 ## 정리
+* 로직을 공통화할 수 있다.
+* 상위 클래스와 하위 클래스가 긴밀하게 연계하여 동작하므로 프로그램 설계 시 어떤 수준에서 처리를 나눌지 고려해야 한다.
 
 
 # Factory Method
