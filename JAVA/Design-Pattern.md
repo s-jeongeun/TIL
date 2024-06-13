@@ -39,38 +39,11 @@ JAVA 언어로 배우는 디자인 패턴 입문
 
 ## 예제
 ```java
-// Iterator
 public interface Iterator {
     public boolean hasNext();
     public Object next();
 }
 
-// Aggregate
-public interface Aggregate {
-    public abstract Iterator iterator();
-}
-
-// ConcreteAggregate
-public class ConcreteAggregate implements Aggregate {
-    private Object[] arr;
-    private int idx = 0;
-
-    public ConcreteAggregate(int size) {
-        this.arr = new Object[size];
-    }
-
-    public void append(Object obj) {
-        this.arr[idx] = obj;
-        idx++;
-    }
-
-    @Override
-    public Iterator iterator() {
-        return new ConcreteIterator(arr);
-    }
-}
-
-// ConcreteIterator
 public class ConcreteIterator implements Iterator {
     private Object[] arr;
     private int idx;
@@ -93,19 +66,42 @@ public class ConcreteIterator implements Iterator {
         return arr[idx++];
     }
 }
+
+public interface Aggregate {
+    public abstract Iterator iterator();
+}
+
+public class ConcreteAggregate implements Aggregate {
+    private Object[] arr;
+    private int idx = 0;
+
+    public ConcreteAggregate(int size) {
+        this.arr = new Object[size];
+    }
+
+    public void append(Object obj) {
+        this.arr[idx] = obj;
+        idx++;
+    }
+
+    @Override
+    public Iterator iterator() {
+        return new ConcreteIterator(arr);
+    }
+}
 ```
 
 ## 정리
 * Iterator를 사용함으로써 구현과 분리하여 반복할 수 있다.
     ```java
-    BookShelf bookShelf = new BookShelf();
-    Iterator<Book> it = bookShelf.iterator();
+    ConcreteAggregate ca = new ConcreteAggregate();
+    Iterator it = ca.iterator();
 
     while(it.hasNext()) {
-        System.out.println("");
+        it.next();
     }
     ```
-    BookShelf를 어떻게 변경하든 BookShelf가 iterator 메소드를 가지고 있고 올바른 Iterator<Book>을 반환하면 위의 while 루프는 변경하지 않아도 동작한다.
+    ConcreteAggregate를 어떻게 변경하든 ConcreteAggregate가 iterator 메소드를 가지고 있고 올바른 Iterator를 반환하면 위의 while 루프는 변경하지 않아도 동작한다.
 
 
 # Adapter
@@ -114,79 +110,77 @@ public class ConcreteIterator implements Iterator {
 * 인스턴스에 의한 Adapter 패턴(위임)
 
 ## 요소
-* Targer (대상)
-    * 현재 필요한 메소드 정의
-* Client (의뢰자)
-    * Target에서 정의된 메소드 사용
 * Adaptee (적응 대상자)
     * 이미 준비된 메소드, adpater 적용 대상
+* Targer (대상)
+    * 현재 필요한 메소드 정의
 * Adapter (적응자)
     * Target에서 정의한 메소드 구현
     * Adaptee의 메소드를 이용해 Client에서 요구하는 Target 구현
+* Client (의뢰자)
+    * Target에서 정의된 메소드 사용
 
 ## 예제
 * 클래스에 의한 Adapter 패턴(상속)
 ```java
-// Target
-public interface Target {
-    public void targetService(String string);
-}
-
-// Client
-public class Client {
-    public static void main(String[] args) {
-        Target t = new Adapter();
-        t.targetService("Hello");
-    }
-}
-
-// Adaptee
 public class Adaptee {
     public void AdapteeService(String string) {
         System.out.println(string)
     }
 }
 
-// Adapter
+public interface Target {
+    public void targetService(String string);
+}
+
 public class Adapter extends Adaptee implements Target {
     @Override
     public void targetService(String string) {
-        AdapteeService(string)
+        AdapteeService("Target: " + string)
     }
 }
+
+public class Client {
+    public static void main(String[] args) {
+        Target t = new Adapter();
+        t.targetService("Hello");
+    }
+}
+```
+```
+Target: Hello
 ```
 
 * 인스턴스에 의한 Adapter 패턴(위임)
 ```java
-// Target
-public interface Target {
-    public void targetService(String string);
-}
-
-// Client
-public class Client {
-    public static void main(String[] args) {
-        Target t = new Adapter();
-        t.targetService("Hello");
-    }
-}
-
-// Adaptee
 public class Adaptee {
     public void AdapteeService(String string) {
         System.out.println(string)
     }
 }
 
-// Adapter
+public interface Target {
+    public void targetService(String string);
+}
+
 public class Adapter extends Target {
     private Adaptee adaptee;
 
     @Override
     public void targetService(String string) {
-        adpatee.AdapteeService(string)
+        adpatee.AdapteeService("Target: " + string)
     }
 }
+
+public class Client {
+    public static void main(String[] args) {
+        Target t = new Adapter();
+        t.targetService("Hello");
+    }
+}
+```
+```
+Target: Hello
 ```
 
 ## 정리
@@ -204,7 +198,7 @@ public class Adapter extends Target {
 
 ## 예제
 ```java
-public class AbstractClass {
+public abstract class AbstractClass {
     public final void templateMethod() {
         abstractMethod1();
         abstractMethod2();
@@ -217,21 +211,26 @@ public class AbstractClass {
 public class ConcreteClass extends AbstractClass {
     @Override
     public void abstractMethod1() {
-        System.out.println("abstractMethod1")
+        System.out.println("abstractMethod1");
     }
 
     @Override
     public void abstractMethod2() {
-        System.out.println("abstractMethod2")
+        System.out.println("abstractMethod2");
     }
 }
-
+```
+```java
 public class Main {
    public static void main(String[] args) {
        AbstractClass template = new ConcreteClass();
        template.templateMethod();
    }
 }
+```
+```
+abstractMethod1
+abstractMethod2
 ```
 
 ## 정리
@@ -240,12 +239,74 @@ public class Main {
 
 
 # Factory Method
+상위 클래스에서 객체를 생성을 위한 인터페이스를 정의하여, 서브 클래스에서 구체적인 객체를 결정하여 구현할 수 있도록 하는 패턴
 
 ## 요소
+* Product (제품)
+    * 객체가 가져야할 인터페이스(API) 선언
+* ConcreteProduct (구체적인 제품)
+    * 템플릿 메소드 구현, 템플릿 메소드에서 사용할 추상 
+* Creator (작성자)
+    * AbstractClass에서 정의된 추상 메소드를 구체적으로 구현
+* ConcreteCreator (구체적인 작성자)
+    * AbstractClass에서 정의된 추상 메소드를 구체적으로 구현
 
 ## 예제
 ```java
+// 제품 클래스
+public abstract class Product {
+    public abstract void test();
+}
 
+public class ConcreteProduct extends Product {
+    private String subject;
+
+    ConcreteProduct(String subject) {
+        this.subject = subject;
+        System.out.println(subject + " 테스트 준비 완료");
+    }
+
+    @Override
+    public void test() {
+        System.out.println(subject + " 테스트 수행");
+    }
+}
+
+// 공장 클래스
+public abstract class Factory {
+    public final Product create(String subject) {
+        Product product = createProduct(subject);
+        return product;
+    }
+
+    protected abstract Product createProduct(String subject);
+}
+
+public class ConcreteCreator extends Factory {
+    @Override
+    protected Product createProduct(String subject) {
+        return new ConcreteProduct(subject);
+    }
+}
+```
+```java
+public class Main {
+    public static void main(String[] args) {
+        Factory factory = new ConcreteCreator();
+
+        Product product1 = factory.create("A");
+        Product product2 = factory.create("B");
+
+        product1.test();
+        product2.test();
+    }
+}
+```
+```
+A 테스트 준비 완료
+B 테스트 준비 완료
+A 테스트 수행
+B 테스트 수행
 ```
 
 ## 정리
