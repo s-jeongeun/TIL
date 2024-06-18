@@ -249,9 +249,9 @@ abstractMethod2
 * Product (제품)
     * 객체가 가져야할 인터페이스(API) 선언
 * ConcreteProduct (구체적인 제품)
-    * 템플릿 메소드 구현, 템플릿 메소드에서 사용할 추상 
+    * 템플릿 메소드 구현, 템플릿 메소드에서 사용할 추상 메소드를 구체적으로 구현
 * Creator (작성자)
-    * AbstractClass에서 정의된 추상 메소드를 구체적으로 구현
+    * Product를 생성하는 추상 클래스
 * ConcreteCreator (구체적인 작성자)
     * AbstractClass에서 정의된 추상 메소드를 구체적으로 구현
 
@@ -382,3 +382,93 @@ Singleton@2a139a55
     INSTANCE
     test
     ```
+
+<br/>
+
+# Prototype
+기존 객체를 복제하여 새로운 인스턴스를 만드는 패턴
+
+## 요소
+* Prototype (원형)
+    * 복제 대상 선언
+
+* ConcretePrototype (구체적인 원형)
+    * 복제 대상을 복사하여 새로운 객체를 만드는 메소드를 구체적으로 구현
+
+* Client (이용자)
+    * 객체 복제 메소드를 이용해 새로운 객체를 생성
+
+## 예제
+```java
+public interface Prototype extends Cloneable {
+    public abstract void use(String string);
+    public abstract Prototype createCopy();
+}
+
+public class ConcretePrototype implements Prototype {
+    @Override
+    public void use(String string) {
+        System.out.println(string);
+    }
+    
+    @Override
+    public Prototype createCopy() {
+        Prototype proto = null;
+        
+        try {
+            proto = (Prototype) clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        
+        return proto;
+    }
+}
+
+public class Client {
+    private Map<String, Prototype> protoMap = new HashMap<>();
+    
+    public void register(String name, Prototype proto) {
+        protoMap.put(name, proto);
+    }
+    
+    public Prototype create(String name) {
+        Prototype proto = protoMap.get(name);
+        return proto.createCopy();
+    }
+}
+```
+```java
+public class Main {
+    public static void main(String args[]) {
+      Client client = new Client();
+      ConcretePrototype cp = new ConcretePrototype();
+      
+      client.register("proto1", cp);
+      client.register("proto2", cp);
+      
+      Prototype proto1 = client.create("proto1");
+      proto1.use("Use proto1");
+      
+      Prototype proto2 = client.create("proto2");
+      proto2.use("Use proto2");
+    }
+}
+```
+```
+Use proto1
+Use proto2
+```
+
+## 정리
+
+
+<br/>
+
+# Builder
+
+## 요소
+
+## 예제
+
+## 정리
