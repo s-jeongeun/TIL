@@ -466,9 +466,84 @@ Use proto2
 <br/>
 
 # Builder
+객체 생성을 위한 구조를 만들어 구조를 통해 객체를 생성하는 패턴
 
 ## 요소
+* Builder (건축가)
+    * 객체 생성을 위한 인터페이스(API) 정의
+
+* ConcreteBuilder (구체적인 건축가)
+    * Builder에서 정의한 API 구현
+
+* Director (감독관)
+    * Builder에서 정의한 API를 이용하여 객체 생성
 
 ## 예제
+```java
+public abstract class Builder {
+    public abstract void setId(int id);
+    public abstract void setName(String name);
+    public abstract void setMail(String mail);
+}
+
+public class ConcreteBuilder extends Builder {
+    private StringBuilder sb = new StringBuilder();
+    
+    @Override
+    public void setId(int id) {
+        sb.append("User ID:\s");
+        sb.append(id);
+        sb.append("\n");
+    }
+    
+    @Override
+    public void setName(String name) {
+        sb.append("User Name:\s");
+        sb.append(name);
+        sb.append("\n");
+    }
+    
+    @Override
+    public void setMail(String mail) {
+        sb.append("User Mail:\s");
+        sb.append(mail);
+        sb.append("\n\n");
+    }
+    
+    public String getUserInfo() {
+        return sb.toString();
+    }
+}
+
+public class Director {
+    private Builder builder;
+    
+    public Director(Builder builder) {
+        this.builder = builder;
+    }
+    
+    public void construct() {
+        builder.setId(00001);
+        builder.setName("A");
+        builder.setMail("aa@aa.com");
+    }
+}
+```
+```java
+public class Main {
+    public static void main(String args[]) {
+      ConcreteBuilder cb = new ConcreteBuilder();
+      Director director = new Director(cb);
+      director.construct();
+      String user = cb.getUserInfo();
+      System.out.println(user);
+    }
+}
+```
+```
+User ID: 1
+User Name: A
+User Mail: aa@aa.com
+```
 
 ## 정리
